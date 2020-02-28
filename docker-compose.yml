@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+    url-blocklist:
+        image: url-blocklist:local
+        restart: always
+        environment:
+            AWS_ACCESS_KEY_ID: redact
+            AWS_SECRET_ACCESS_KEY: redact
+            AWS_DEFAULT_REGION: redact
+        ports:
+          - 80:5000
