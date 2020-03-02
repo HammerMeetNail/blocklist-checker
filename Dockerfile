@@ -13,7 +13,6 @@ ENTRYPOINT [ "gunicorn", "-c", "gunicorn.py", "wsgi:app" ]
 # --- Test Stage ----
 FROM Build as Test
 
-WORKDIR /app
 COPY test /app/test
 RUN pip install -r test/requirements.txt
 
