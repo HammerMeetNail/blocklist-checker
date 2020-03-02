@@ -1,0 +1,27 @@
+language: python
+
+python:
+    - "3.6.9"
+
+services:
+  - docker
+
+install: 
+  - pip install coveralls==1.11.1
+
+jobs:
+  include:
+    - stage: Test
+      if: (tag IS NOT present)
+      script:
+      - docker build --target Test --tag "${TRAVIS_REPO_SLUG,,}":$TRAVIS_BUILD_ID .
+      - docker run --rm --entrypoint sh "${TRAVIS_REPO_SLUG,,}":$TRAVIS_BUILD_ID -c "coveralls --output=coveralls_report && cat coveralls_report" > coveralls_report
+      - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls --merge=coveralls_report
+    - stage: Release
+      if: (tag =~ /(\d+\.){2}\d+/)
+      script: 
+      - docker build --target Release --tag "${TRAVIS_REPO_SLUG,,}":$TRAVIS_TAG . || travis_terminate 1;
+      - docker run --rm --entrypoint sh "${TRAVIS_REPO_SLUG,,}":$TRAVIS_BUILD_ID -c "coveralls --output=coveralls_report && cat coveralls_report" > coveralls_report
+      - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls --merge=coveralls_report
+      - docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push "${TRAVIS_REPO_SLUG,,}":$TRAVIS_TAG

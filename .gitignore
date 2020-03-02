@@ -130,3 +130,6 @@ dmypy.json
 
 # VSCode
 .vscode
+
+# Code Coverage
+coveralls_report

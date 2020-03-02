@@ -16,6 +16,9 @@ Primary sort key
 ```
 docker build --tag url-blocklist:local .
 docker-compose up -d
+
+# Check if url is blocked
+curl localhost/urlinfo/1/example.com:80/test
 ```
 
 # Local Development
