@@ -19,7 +19,7 @@ A stateless service for determining if a URL is safe to visit.
 
 # Getting Started
 ```
-docker build --tag blocklist-checker:latest .
+docker build --tag hammermeetnail/blocklist-checker:latest .
 
 # Add your AWS info to docker-compose.yml
 docker-compose up -d
