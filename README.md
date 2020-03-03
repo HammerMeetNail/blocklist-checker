@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/HammerMeetNail/blocklist-checker.svg?branch=master)](https://travis-ci.com/HammerMeetNail/blocklist-checker)
-[![Coverage Status](https://coveralls.io/repos/github/HammerMeetNail/url-blocklist/badge.svg?branch=master)](https://coveralls.io/github/HammerMeetNail/url-blocklist?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/HammerMeetNail/blocklist-checker/badge.svg?branch=master)](https://coveralls.io/github/HammerMeetNail/blocklist-checker?branch=master)
 
 # blocklist-checker
 A stateless service for determining if a URL is safe to visit.
