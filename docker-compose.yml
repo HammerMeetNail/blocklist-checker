@@ -2,11 +2,12 @@ version: '3.1'
 
 services:
     url-blocklist:
-        image: url-blocklist:local
+        image: blocklist-checker:local
         restart: always
         environment:
             AWS_ACCESS_KEY_ID: redact
             AWS_SECRET_ACCESS_KEY: redact
-            AWS_DEFAULT_REGION: redact
+            AWS_DEFAULT_REGION: us-east-1
+            DYNAMODB_TABLE_NAME: blocklist
         ports:
           - 80:5000

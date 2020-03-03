@@ -8,6 +8,7 @@ pylint = "*"
 pytest = "==5.3.5"
 coveralls = "==1.11.1"
 pytest-cov = "==2.8.1"
+moto = "*"
 
 [requires]
 python_version = "3.6"
@@ -31,3 +32,4 @@ Werkzeug = "==1.0.0"
 pytest = "==5.3.5"
 coveralls = "==1.11.1"
 pytest-cov = "==2.8.1"
+moto = "*"
