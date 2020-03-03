@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
     url-blocklist:
-        image: blocklist-checker:local
+        image: blocklist-checker:latest
         restart: always
         environment:
             AWS_ACCESS_KEY_ID: redact

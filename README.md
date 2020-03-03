@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/HammerMeetNail/blocklist-checker.svg?branch=master)](https://travis-ci.com/HammerMeetNail/blocklist-checker)
+[![Coverage Status](https://coveralls.io/repos/github/HammerMeetNail/url-blocklist/badge.svg?branch=master)](https://coveralls.io/github/HammerMeetNail/url-blocklist?branch=master)
+
 # blocklist-checker
 A stateless service for determining if a URL is safe to visit.
 
@@ -16,7 +19,7 @@ A stateless service for determining if a URL is safe to visit.
 
 # Getting Started
 ```
-docker build --tag blocklist-checker:local .
+docker build --tag blocklist-checker:latest .
 
 # Add your AWS info to docker-compose.yml
 docker-compose up -d

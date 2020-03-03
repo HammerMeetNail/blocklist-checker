@@ -25,3 +25,5 @@ jobs:
       - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls --merge=coveralls_report
       - docker login -u $DOCKER_USER -p $DOCKER_PASS
       - docker push "${TRAVIS_REPO_SLUG,,}":$TRAVIS_TAG
+      - docker tag "${TRAVIS_REPO_SLUG,,}":$TRAVIS_TAG "${TRAVIS_REPO_SLUG,,}":latest
+      - docker push "${TRAVIS_REPO_SLUG,,}":latest
