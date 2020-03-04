@@ -1,7 +1,9 @@
 from os import getenv
+from hashlib import sha256
+# from urllib.parse import unquote
 
 from boto3 import client
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 
 dynamodb_client = client('dynamodb')
@@ -13,15 +15,17 @@ app = Flask(__name__)
 @app.route("/urlinfo/1/<path:host>", defaults={'path': '/'})
 @app.route("/urlinfo/1/<path:host>/<path:path>")
 def check_url(host, path):
-
     # Sanitize host and path. "/" should never be at the end of host, always be at the start of path
     if host.endswith("/"):
         host = host[:-1]
     if not path.startswith("/"):
         path = f"/{path}"
+    path = request.full_path[request.full_path.find(host) + len(host):]
+    if path.endswith("?"):
+        path = path[:-1]
 
-    # Query DynamoDB for a single record - domain and path must match exactly
-    print(dynamodb_table)
+    # Query DynamoDB for a single record - domain, sha256 and path must match exactly
+    sha = sha256(f"{host}{path}".encode()).hexdigest()
     blocked_url = dynamodb_client.query(
         TableName=dynamodb_table,
         Select="COUNT",
@@ -31,6 +35,12 @@ def check_url(host, path):
                 'ComparisonOperator': 'EQ',
                 'AttributeValueList': [{'S': host}]
             },
+            'sha256': {
+                'ComparisonOperator': 'EQ',
+                'AttributeValueList': [{'S': sha}]
+            }
+        },
+        QueryFilter={
             'path': {
                 'ComparisonOperator': 'EQ',
                 'AttributeValueList': [{'S': path}]

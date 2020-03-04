@@ -1,4 +1,5 @@
 import pytest
+from hashlib import sha256
 from os import path
 import boto3
 from moto import mock_dynamodb2
@@ -18,11 +19,11 @@ def mock_aws():
         'TableName': "blocklist",
         'KeySchema': [
             {'AttributeName': "domain", 'KeyType': "HASH"},    # Partition key
-            {'AttributeName': "path", 'KeyType': "RANGE"}   # Sort key
+            {'AttributeName': "sha256", 'KeyType': "RANGE"}   # Sort key
         ],
         'AttributeDefinitions': [
             {'AttributeName': "domain", 'AttributeType': "S"},
-            {'AttributeName': "path", 'AttributeType': "S"}
+            {'AttributeName': "sha256", 'AttributeType': "S"}
         ],
         'ProvisionedThroughput': {
             'ReadCapacityUnits': 5,
@@ -48,12 +49,16 @@ blocked_urls = [
 def test_block(prefix, host, path):
 
     client = mock_aws()
+    sha = sha256(f"{host}{path}".encode()).hexdigest()
 
     client.put_item(
         TableName="blocklist",
         Item={
             'domain': {
                 'S': host
+            },
+            'sha256': {
+                'S': path
             },
             'path': {
                 'S': path
