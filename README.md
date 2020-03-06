@@ -68,13 +68,4 @@ gunicorn -c gunicorn.py wsgi:app
 ```
 
 ## Tests
-`Pytest` is used to execute and paramaterize tests. `Moto` is used to mock out the AWS `boto3` library. Tests are executed in the `Dockerfile` under the `Test` stage. 
-
-# Known Issues
-Some URLs are are not currently processed correctly and will not be blocked. 
-
-* If the URL contains a combination of HTTP encoded symbols and symbols
-	- Not enough information is making it to Flask to know what the original URL is
-	- May be resolved with some adjustments to Gunicorn
-* If the URL contains a fragment
-	- Fragments are not sent over HTTP, difficult to address with Flask. 
+`Pytest` is used to execute and paramaterize tests. `Moto` is used to mock out the AWS `boto3` library. Tests are executed in the `Dockerfile` under the `Test` stage. Test URLs are pulled from a known list retrieved from https://openphish.com/feed.txt

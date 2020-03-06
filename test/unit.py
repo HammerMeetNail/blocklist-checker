@@ -1,7 +1,8 @@
 import pytest
+import boto3
+from urllib.parse import urlparse
 from hashlib import sha256
 from os import path
-import boto3
 from moto import mock_dynamodb2
 
 import sys
@@ -36,20 +37,38 @@ def mock_aws():
 
     return client
 
+# Generate a list of blocked urls for test client
+def generate_blocklist():
+    blocked_urls = []
+
+    with open("test/feed.txt") as feed:
+        for line in feed:
+            url = urlparse(line)
+            host = url.netloc
+            query = url.query
+            path = url.path
+
+            if url.scheme == "http" and host.find(":") == -1:
+                host = host.strip() + ":80"
+            elif url.scheme == "https" and host.find(":") == -1:
+                host = host.strip() + ":443"
+
+            if len(path) == 0:
+                path = "/"
+
+            blocked_urls.append(("/urlinfo/1/",host, path.rstrip(), query.rstrip()))
+            
+    return blocked_urls
+
 # Validate that urls added to DynamoDB return a 403 
-blocked_urls = [
-    ("/urlinfo/1/", "example.com:80", "/"),
-    ("/urlinfo/1/", "example.com:80", "/one"),
-    ("/urlinfo/1/", "example.com:80", "/one/two/three/four")
-]
-
-
+blocked_urls = generate_blocklist()
 @mock_dynamodb2
-@pytest.mark.parametrize("prefix,host,path", blocked_urls)
-def test_block(prefix, host, path):
+@pytest.mark.parametrize("prefix,host,path,query", blocked_urls)
+def test_block(prefix, host, path,query):
 
     client = mock_aws()
     sha = sha256(f"{host}{path}".encode()).hexdigest()
+    print(sha)
 
     client.put_item(
         TableName="blocklist",
@@ -58,7 +77,7 @@ def test_block(prefix, host, path):
                 'S': host
             },
             'sha256': {
-                'S': path
+                'S': sha
             },
             'path': {
                 'S': path
@@ -67,7 +86,7 @@ def test_block(prefix, host, path):
     )
 
     with app.test_client() as client:
-        result = client.get(f"{prefix}{host}{path}")
+        result = client.get(f"{prefix}{host}{path}", query_string=query)
 
         assert result.status_code == 403
         assert result.get_json() == {'blocked': True}
@@ -78,10 +97,8 @@ allowed_urls = [
     ("/urlinfo/1/", "automagic.com:443", "/one"),
     ("/urlinfo/1/", "automagic.com:443", "/one/two/three/four")
 ]
-
-
 @mock_dynamodb2
-@pytest.mark.parametrize("prefix,host,path", blocked_urls)
+@pytest.mark.parametrize("prefix,host,path", allowed_urls)
 def test_allow(prefix, host, path):
 
     client = mock_aws()
