@@ -15,12 +15,12 @@ app.url_map.merge_slashes = False
 @app.route("/urlinfo/1/<path:host>", defaults={'path': '/'})
 @app.route("/urlinfo/1/<path:host>/<path:path>")
 def check_url(host, path):
-
+    
     # determine true host and path using raw_uri
     if host.endswith("/"):
         host = host[:-1]
     host_offset = request.environ['RAW_URI'].find(host) + len(host)
-    path = request.environ['RAW_URI'][host_offset:]
+    path = request.environ['RAW_URI'][host_offset:] if not path else path
 
     # Query DynamoDB for a single record - domain, sha256 and path must match exactly
     sha = sha256(f"{host}{path}".encode()).hexdigest()
