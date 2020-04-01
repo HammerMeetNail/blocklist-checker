@@ -20,11 +20,11 @@ def check_url(host, path):
     if host.endswith("/"):
         host = host[:-1]
     host_offset = request.environ['RAW_URI'].find(host) + len(host)
-    path = request.environ['RAW_URI'][host_offset:] if not path else path
+    path = path if path == "/" else request.environ['RAW_URI'][host_offset:]
 
     # Query DynamoDB for a single record - domain, sha256 and path must match exactly
     sha = sha256(f"{host}{path}".encode()).hexdigest()
-    print(sha)
+
     blocked_url = dynamodb_client.query(
         TableName=dynamodb_table,
         Select="COUNT",
